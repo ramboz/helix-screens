@@ -9,7 +9,7 @@ module.exports.after = {
     // Load embeds with layout defined in the matching yaml file if available
     meta: async (context, { secrets, request, logger }) => {
         const params = getQueryParams(context.request)
-        const devicePath = decodeURIComponent(params.id)
+        const devicePath = `/devices/${decodeURIComponent(params.id)}`
         const deviceProps = await fetchYAML(`${devicePath}.yaml`, { request, logger })
         deviceProps.path = devicePath
         

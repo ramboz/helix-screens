@@ -11,7 +11,7 @@ module.exports.after = {
         
         // Get the device etag
         const params = getQueryParams(context.request)
-        const devicePath = decodeURIComponent(params.id)
+        const devicePath = `/devices/${decodeURIComponent(params.id)}`
         const deviceProps = await fetchYAML(`${devicePath}.yaml`, { request, logger })
         let etag = deviceProps.etag
         
