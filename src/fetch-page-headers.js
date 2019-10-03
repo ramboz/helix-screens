@@ -12,26 +12,24 @@
 
 /* eslint-disable no-param-reassign */
 const rp = require('request-promise-native');
-const yaml = require('js-yaml');
 
 /**
  * Tries to load the `<path>.yaml` from the content repository.
  * @return {*} the meta props object or {@code {}}
  */
-async function fetch(yamlPath, { logger }) {
-  const url = `https://raw.githubusercontent.com/ramboz/helix-screens/master${yamlPath}`;
+async function fetch(pagePath, { logger }) {
+  const url = `https://raw.githubusercontent.com/ramboz/helix-screens/master${pagePath}`;
   logger.info(`trying to load ${url}`);
   try {
     return await rp({
+      method: 'HEAD',
       url,
       transform: (data, res) => {
-        const props = yaml.safeLoad(data)
-        props.etag = JSON.parse(res.headers.etag || null)
-        return props;
+        return res.headers;
       }
     });
   } catch (e) {
-    logger.info('unable to load yaml: e', e);
+    logger.info('unable to load page headers: e', e);
     return Promise.resolve({});
   }
 }

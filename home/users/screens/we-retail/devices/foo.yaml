@@ -1,6 +1,3 @@
 id: foo
-timestamp: 1570090037795
-model: Browser
-path: /home/users/screens/we-retail/devices/foo
 pingFrequency: 5
-configPath: /content/screens/we-retail/locations/demo/flagship/single/device-config
+display: /content/screens/we-retail/locations/demo/flagship/single

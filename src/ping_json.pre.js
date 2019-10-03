@@ -1,38 +1,37 @@
 const fetchYAML = require('./fetch-yaml')
-
-function getQueryParams(req) {
-    return req.queryString.replace(/^\?/, '').split('&').reduce((params, str) => {
-        const param = str.split('=')
-        params[param[0]] = param[1]
-        return params
-    }, {})
-}
+const fetchPageHeaders = require('./fetch-page-headers')
+const getQueryParams = require('./get-query-parameters')
 
 module.exports.pre = () => {}
 
 module.exports.after = {
 
     // Load embeds with layout defined in the matching yaml file if available
-    meta: async (context, { secrets, request, logger }) => {
-        try {
-            const params = getQueryParams(context.request)
-            const deviceProps = await fetchYAML(`/home/users/screens/we-retail/devices/${params.id}.yaml`, { request, logger })
-            let lastModified = deviceProps.lastModified
-            logger.log('info', '1>' + deviceProps.lastModified)
-
-            if (deviceProps.configPath) {
-                const displayPath = deviceProps.configPath.split('/').slice(0, -1).join('/')
-                const displayProps = await fetchYAML(`${displayPath}.yaml`, { request, logger })
-                logger.log('info', '2>' + displayProps.lastModified)
-                lastModified = deviceProps.lastModified
+    meta: async (context, { request, logger }) => {
+        
+        // Get the device etag
+        const params = getQueryParams(context.request)
+        const deviceProps = await fetchYAML(`${params.id}.yaml`, { request, logger })
+        let etag = deviceProps.etag
+        
+        let headers = {}
+        if (deviceProps.displayPath) {
+            
+            // Get the display etag
+            const displayPath = deviceProps.displayPath
+            const displayProps = await fetchYAML(`${displayPath}.yaml`, { request, logger })
+            etag += `-${displayProps.etag}`
+            
+            // Get the channels etags
+            const channelRoles = Object.keys(displayProps.channels);
+            for (let i = 0; i < channelRoles.length; i++) {
+                const channePath = displayProps.channels[channelRoles[i]].path.replace(/\.(html|md)$/, '')
+                headers = await fetchPageHeaders(`${channePath}.md`, { request, logger })
+                etag += `-${JSON.parse(headers.etag || null)}`
             }
+            
+        }
 
-            logger.log('info', '0>' + lastModified)
-            context.content.json = JSON.parse(context.content.body)
-            context.content.json.lastModified = lastModified
-        }
-        catch (e) {
-            context.content.json = {}
-        }
+        context.content.json = {lastModified: etag}
     }
 }
