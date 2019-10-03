@@ -10,5 +10,9 @@ idleTimeout: 300
 strategy: normal
 transition: normal
 channels:
-  - idle: /content/screens/we-retail/channels/idle.html
-  - idle-night: /content/screens/we-retail/channels/idle-night.html
+  - idle:
+    path: /content/screens/we-retail/channels/idle.html
+    priority: 1
+  - idle:
+    path: /content/screens/we-retail/channels/idle-night.html
+    priority: 1
