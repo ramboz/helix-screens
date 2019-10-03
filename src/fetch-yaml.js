@@ -11,7 +11,6 @@
  */
 
 /* eslint-disable no-param-reassign */
-const fs = require('fs');
 const rp = require('request-promise-native');
 const yaml = require('js-yaml');
 
@@ -19,29 +18,21 @@ const yaml = require('js-yaml');
  * Tries to load the `<path>.yaml` from the content repository.
  * @return {*} the meta props object or {@code {}}
  */
-async function fetch(res, { secrets = {}, request, logger }) {
-  const {
-    owner, repo, ref, path,
-  } = request.params;
-  const yamlPath = res || path.replace(/\.\w+$/, '.yaml');
-  const rootUrl = secrets.REPO_RAW_ROOT || 'https://raw.githubusercontent.com/';
-  const url = `${rootUrl}${owner}/${repo}/${ref}${yamlPath}`;
+async function fetch(yamlPath, { logger }) {
+  const url = `https://raw.githubusercontent.com/ramboz/helix-screens/master${yamlPath}`;
   logger.info(`trying to load ${url}`);
   try {
     return await rp({
       url,
-      transform: (data) => {
-        return yaml.safeLoad(data)
+      transform: (data, res) => {
+        const props = yaml.safeLoad(data)
+        props.lastModified = res.headers.date ? new Date(res.headers.date).getTime() : null
+        return props;
       }
     });
   } catch (e) {
-    try {
-      const data = yaml.safeLoad(fs.readFileSync(res, 'utf8'));
-      return Promise.resolve(data);
-    } catch (e2) {
-      logger.info('unable to load yaml: ', e2);
-      return Promise.resolve({});
-    }
+    logger.info('unable to load yaml: e', e);
+    return Promise.resolve({});
   }
 }
 

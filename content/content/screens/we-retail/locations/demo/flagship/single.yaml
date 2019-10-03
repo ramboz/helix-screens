@@ -1,0 +1,3 @@
+channels:
+  - idle: /content/screens/we-retail/channels/idle.html
+  - idle-night: /content/screens/we-retail/channels/idle-night.html
