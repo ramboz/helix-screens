@@ -13,6 +13,15 @@ channels:
   idle:
     path: /content/screens/we-retail/channels/idle.html
     priority: 1
+    events:
+      - load
+      - idle
+      - timer
+    schedule: after 6:00 and before 18:00
   idle-night:
     path: /content/screens/we-retail/channels/idle-night.html
     priority: 1
+    events:
+      - idle
+      - timer
+    schedule: before 6:00 and also after 18:00
