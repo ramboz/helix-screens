@@ -9,14 +9,14 @@ module.exports.after = {
     // Load embeds with layout defined in the matching yaml file if available
     meta: async (context, { secrets, request, logger }) => {
         const params = getQueryParams(context.request)
-        const deviceProps = await fetchYAML(`${params.id}.yaml`, { request, logger })
-        deviceProps.path = params.id
-        
+        const devicePath = decodeURIComponent(params.id)
+        const deviceProps = await fetchYAML(`${devicePath}.yaml`, { request, logger })
+        deviceProps.path = devicePath
         
         let displayProps = {}
         let channels = []
-        if (deviceProps.configPath) {
-            const displayPath = deviceProps.displayPath
+        if (deviceProps.display) {
+            const displayPath = deviceProps.display
             displayProps = await fetchYAML(`${displayPath}.yaml`, { request, logger })
             displayProps.path = displayPath
             displayProps.configPath = displayPath + '/device'
@@ -28,14 +28,14 @@ module.exports.after = {
                 channelProps.role = channelRoles[i]
                 channelProps.title = ''
                 const headers = await fetchPageHeaders(`${channePath}.md`, { request, logger })
-                channelProps.lastModified = new Date(headers.etag).getTime()
+                channelProps.lastModified = JSON.parse(headers.etag)
                 channels.push(channelProps)
             }
             displayProps.channels = channels
         }
 
-        deviceProps.configPath = deviceProps.displayPath + '/device'
-        delete deviceProps.displayPath
+        deviceProps.configPath = deviceProps.display + '/device'
+        delete deviceProps.display
 
         context.content.json = {
             "device": deviceProps,

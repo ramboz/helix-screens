@@ -11,14 +11,15 @@ module.exports.after = {
         
         // Get the device etag
         const params = getQueryParams(context.request)
-        const deviceProps = await fetchYAML(`${params.id}.yaml`, { request, logger })
+        const devicePath = decodeURIComponent(params.id)
+        const deviceProps = await fetchYAML(`${devicePath}.yaml`, { request, logger })
         let etag = deviceProps.etag
         
         let headers = {}
-        if (deviceProps.displayPath) {
+        if (deviceProps.display) {
             
             // Get the display etag
-            const displayPath = deviceProps.displayPath
+            const displayPath = deviceProps.display
             const displayProps = await fetchYAML(`${displayPath}.yaml`, { request, logger })
             etag += `-${displayProps.etag}`
             
