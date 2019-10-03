@@ -22,7 +22,6 @@
  * @param context.content The content
  */
 function pre(context) {
-  context.content.time = `${new Date()}`;
 }
 
 module.exports.pre = pre;
