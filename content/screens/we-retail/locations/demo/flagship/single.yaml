@@ -1,3 +1,14 @@
+title: Single Screen Display
+description: Demo location of a single screen display
+resolution: 2560x1440
+layout:
+  numCols: 1
+  numRows: 1
+idleTitle: Interactive Experience
+idleText: Touch anywhere to begin
+idleTimeout: 300
+strategy: normal
+transition: normal
 channels:
   - idle: /content/screens/we-retail/channels/idle.html
   - idle-night: /content/screens/we-retail/channels/idle-night.html
