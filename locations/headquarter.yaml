@@ -11,7 +11,7 @@ strategy: normal
 transition: normal
 channels:
   idle:
-    path: /content/screens/we-retail/channels/idle.html
+    path: /experiences/idle.html
     priority: 1
     events:
       - load
@@ -19,7 +19,7 @@ channels:
       - timer
     schedule: after 6:00 and before 18:00
   idle-night:
-    path: /content/screens/we-retail/channels/idle-night.html
+    path: /experiences/idle-night.html
     priority: 1
     events:
       - idle
