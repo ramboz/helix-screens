@@ -21,7 +21,7 @@ export default async (mdPath, { request, logger }) => {
     transform: (data, res) => {
       return {
         md: data,
-        etaf: JSON.parse(res.headers.etag || null)
+        etag: JSON.parse(res.headers.etag || null)
       }
     }
   }, { request, logger })

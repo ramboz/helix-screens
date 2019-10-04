@@ -13,14 +13,22 @@
 import rp from 'request-promise-native';
 
 /**
- * Tries to load the `path` from the content repository.
+ * Tries to load the last commit for `<path>` from the github api.
  * @return {*} the meta props object or {@code {}}
  */
-export default async (path, options, { request, logger }) => {
-  const url = `https://raw.githubusercontent.com/ramboz/helix-screens/master${path}`
+export default async (path, { secrets, request, logger }) => {
+  const url = `https://api.github.com/repos/ramboz/helix-screens/commits?path=${path}&page=1&per_page=1`
   logger.info(`trying to load ${url}`)
   try {
-    return await rp(Object.assign({ url }, options))
+    return await rp({
+      url,
+      transform: (data) => {
+        return JSON.parse(data)[0]
+      },
+      headers: {
+        'User-Agent': 'Helix-Screens',
+      },
+    })
   } catch (e) {
     logger.info('unable to load:', e)
     return Promise.resolve({})
