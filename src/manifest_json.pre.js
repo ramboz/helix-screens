@@ -1,5 +1,5 @@
 const visit = require('unist-util-visit')
-const redirectSvcRequest = require('./utils/redirect-service-requests')
+const redirectSvcRequest = require('./utils/redirect-svc-requests')
 const fetchPageHeaders = require('./utils/fetch-page-headers')
 
 module.exports.pre = () => {}

@@ -1,0 +1,25 @@
+{
+  "name": "helix-screens",
+  "version": "0.0.1",
+  "description": "A helix server POC for AEM Screens",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ramboz/helix-screens.git"
+  },
+  "author": "Julien Ramboz <ramboz@adobe.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ramboz/helix-screens/issues"
+  },
+  "homepage": "https://github.com/ramboz/helix-screens#readme",
+  "dependencies": {
+    "js-yaml": "^3.13.1",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7",
+    "unist-util-visit": "^2.0.0"
+  }
+}

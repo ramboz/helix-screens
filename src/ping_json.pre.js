@@ -1,4 +1,4 @@
-const redirectSvcRequest = require('./utils/redirect-service-requests')
+const redirectSvcRequest = require('./utils/redirect-svc-requests')
 const fetchYAML = require('./utils/fetch-yaml')
 const fetchPageHeaders = require('./utils/fetch-page-headers')
 const getQueryParams = require('./utils/get-query-parameters')
