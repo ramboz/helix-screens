@@ -26,7 +26,7 @@ module.exports.after = {
             const displayPath = deviceProps.display
             displayProps = await fetchYAML(`${displayPath}.yaml`, { request, logger })
             displayProps.path = displayPath
-            displayProps.configPath = displayPath + '/device'
+            displayProps.configPath = displayPath + '/' + devicePath.split('/').slice(-1)
             
             // Get the channels properties
             let channels = []
@@ -37,7 +37,7 @@ module.exports.after = {
                 channelProps.path = channePath
                 channelProps.role = channelRoles[i]
                 const res = await fetchMD(`${channePath}.md`, { request, logger })
-                channelProps.title = res.md.split(/\r?\n/).find((line) => line.match(/^#+ /)).replace(/#+ /, '')
+                channelProps.title = res.md ? res.md.split(/\r?\n/).find((line) => line.match(/^#+ /)).replace(/#+ /, '') : ''
                 channelProps.lastModified = res.etag
                 channelProps.offline = {
                     enabled: true,
