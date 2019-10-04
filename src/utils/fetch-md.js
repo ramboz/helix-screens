@@ -10,30 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable no-param-reassign */
-const rp = require('request-promise-native');
+import fetchInRepo from './fetch-in-repo'
 
 /**
  * Tries to load the `<path>.md` from the content repository.
  * @return {*} the meta props object or {@code {}}
  */
-async function fetch(mdPath, { logger }) {
-  const url = `https://raw.githubusercontent.com/ramboz/helix-screens/master${mdPath}`;
-  logger.info(`trying to load ${url}`);
-  try {
-    return await rp({
-      url,
-      transform: (data, res) => {
-        return {
-          md: data,
-          etaf: JSON.parse(res.headers.etag || null)
-        }
+export default async (mdPath, { request, logger }) => {
+  return await fetchInRepo(mdPath, {
+    transform: (data, res) => {
+      return {
+        md: data,
+        etaf: JSON.parse(res.headers.etag || null)
       }
-    });
-  } catch (e) {
-    logger.info('unable to load md: e', e);
-    return Promise.resolve({});
-  }
+    }
+  }, { request, logger })
 }
-
-module.exports = fetch;

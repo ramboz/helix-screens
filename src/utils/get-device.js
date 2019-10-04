@@ -10,19 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import fetchInRepo from './fetch-in-repo'
-import { safeLoad } from 'js-yaml'
+const getQueryParams = (req) => {
+    return req.queryString.replace(/^\?/, '').split('&').reduce((params, str) => {
+        const param = str.split('=')
+        params[param[0]] = param[1]
+        return params
+    }, {})
+}
 
-/**
- * Tries to load the `<path>.yaml` from the content repository.
- * @return {*} the meta props object or {@code {}}
- */
-export default async (yamlPath, { request, logger }) => {
-  return await fetchInRepo(yamlPath, {
-    transform: (data, res) => {
-      const props = safeLoad(data)
-      props.etag = JSON.parse(res.headers.etag || null)
-      return props;
-    }
-  }, { request, logger })
+export default (req) => {
+    const params = getQueryParams(req)
+    const deviceId = decodeURIComponent(params.id);
+    return deviceId.indexOf('/') === 0 ? deviceId : `/content/screens/devices/${deviceId}`
 }

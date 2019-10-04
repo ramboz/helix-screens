@@ -1,6 +1,6 @@
 const visit = require('unist-util-visit')
-const redirectSvcRequest = require('./utils/redirect-svc-requests')
-const fetchPageHeaders = require('./utils/fetch-page-headers')
+const redirectSvcRequest = require('./utils/redirect-svc-requests').default
+const fetchPageHeaders = require('./utils/fetch-page-headers').default
 
 module.exports.pre = () => {}
 

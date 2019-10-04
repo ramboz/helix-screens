@@ -1,7 +1,6 @@
-const fetchMD = require('./utils/fetch-md')
-const fetchYAML = require('./utils/fetch-yaml')
-const fetchPageHeaders = require('./utils/fetch-page-headers')
-const getQueryParams = require('./utils/get-query-parameters')
+const fetchMD = require('./utils/fetch-md').default
+const fetchYAML = require('./utils/fetch-yaml').default
+const getDevice = require('./utils/get-device').default
 
 module.exports.pre = () => {}
 
@@ -11,9 +10,7 @@ module.exports.after = {
     meta: async (context, { secrets, request, logger }) => {
         
         // Get the device properties
-        const params = getQueryParams(context.request)
-        const deviceId = decodeURIComponent(params.id);
-        const devicePath = deviceId.indexOf('/') === 0 ? deviceId : `/devices/${deviceId}`
+        const devicePath = getDevice(context.request)
         const deviceProps = await fetchYAML(`${devicePath}.yaml`, { request, logger })
         deviceProps.id = devicePath
         deviceProps.path = devicePath

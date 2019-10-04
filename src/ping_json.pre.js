@@ -1,7 +1,7 @@
-const redirectSvcRequest = require('./utils/redirect-svc-requests')
-const fetchYAML = require('./utils/fetch-yaml')
-const fetchPageHeaders = require('./utils/fetch-page-headers')
-const getQueryParams = require('./utils/get-query-parameters')
+const redirectSvcRequest = require('./utils/redirect-svc-requests').default
+const fetchYAML = require('./utils/fetch-yaml').default
+const fetchPageHeaders = require('./utils/fetch-page-headers').default
+const getDevice = require('./utils/get-device').default
 
 module.exports.pre = () => {}
 
@@ -15,9 +15,7 @@ module.exports.after = {
     meta: async (context, { request, logger }) => {
         
         // Get the device etag
-        const params = getQueryParams(context.request)
-        const deviceId = decodeURIComponent(params.id);
-        const devicePath = deviceId.indexOf('/') === 0 ? deviceId : `/content/screens/devices/${deviceId}`
+        const devicePath = getDevice(context.request)
         const deviceProps = await fetchYAML(`${devicePath}.yaml`, { request, logger })
         
         let etag = deviceProps.etag
