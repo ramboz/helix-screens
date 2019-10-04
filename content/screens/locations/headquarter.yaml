@@ -2,7 +2,7 @@ resolution: 2560x1440
 idleTimeout: 300
 channels:
   idle:
-    path: /channels/idle.html
+    path: /content/screens/channels/idle.html
     priority: 1
     events:
       - load
