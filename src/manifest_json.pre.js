@@ -1,15 +1,13 @@
 const visit = require('unist-util-visit')
-const fetchPageHeaders = require('./fetch-page-headers')
+const redirectSvcRequest = require('./utils/redirect-service-requests')
+const fetchPageHeaders = require('./utils/fetch-page-headers')
 
 module.exports.pre = () => {}
 
 module.exports.before = {
-    fetch: async (context, { request, logger }) => {
-        if (request.params.path.match(/_jcr_content\.md$/)) {
-            request.params.path = '/content/screens/svc.md'
-        }
-    }
+    fetch: redirectSvcRequest
 }
+
 module.exports.after = {
 
     // Load embeds with layout defined in the matching yaml file if available

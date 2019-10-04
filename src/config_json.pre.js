@@ -1,7 +1,7 @@
-const fetchMD = require('./fetch-md')
-const fetchYAML = require('./fetch-yaml')
-const fetchPageHeaders = require('./fetch-page-headers')
-const getQueryParams = require('./get-query-parameters')
+const fetchMD = require('./utils/fetch-md')
+const fetchYAML = require('./utils/fetch-yaml')
+const fetchPageHeaders = require('./utils/fetch-page-headers')
+const getQueryParams = require('./utils/get-query-parameters')
 
 module.exports.pre = () => {}
 

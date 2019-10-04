@@ -1,16 +1,14 @@
-const fetchYAML = require('./fetch-yaml')
-const fetchPageHeaders = require('./fetch-page-headers')
-const getQueryParams = require('./get-query-parameters')
+const redirectSvcRequest = require('./utils/redirect-service-requests')
+const fetchYAML = require('./utils/fetch-yaml')
+const fetchPageHeaders = require('./utils/fetch-page-headers')
+const getQueryParams = require('./utils/get-query-parameters')
 
 module.exports.pre = () => {}
 
 module.exports.before = {
-    fetch: async (context, { request, logger }) => {
-        if (request.params.path.match(/_jcr_content\.md$/)) {
-            request.params.path = '/content/screens/svc.md'
-        }
-    }
+    fetch: redirectSvcRequest
 }
+
 module.exports.after = {
 
     // Load embeds with layout defined in the matching yaml file if available
@@ -19,7 +17,7 @@ module.exports.after = {
         // Get the device etag
         const params = getQueryParams(context.request)
         const deviceId = decodeURIComponent(params.id);
-        const devicePath = deviceId.indexOf('/') === 0 ? deviceId : `/devices/${deviceId}`
+        const devicePath = deviceId.indexOf('/') === 0 ? deviceId : `/content/screens/devices/${deviceId}`
         const deviceProps = await fetchYAML(`${devicePath}.yaml`, { request, logger })
         
         let etag = deviceProps.etag
