@@ -19,6 +19,9 @@
             Direct referenced assets
           */-->
           <sly data-sly-test="${group.type == 'list'}" data-sly-list="${group.children}">
+            <!--/*
+              Image
+            */-->
             <sly data-sly-test="${item.children[0].children[0].type == 'image'}">
               <div class="image parbase cq-Screens-image cq-Sequence-item">
                 <div style="background-image: url('${item.children[0].children[0].url}'); background-size: cover;"></div>
@@ -27,8 +30,24 @@
                 <div class="transition" data-transition="fade" data-transition-duration="600"></div>
               </div>
             </sly>
+            <!--/*
+              Embedded channel
+            */-->
             <sly data-sly-test="${item.children[0].children[0].type == 'embed'}">
               ${content.document.body.children[groupList.index].children[itemList.index].children[0]}
+            </sly>
+            <!--/*
+              Video
+            */-->
+            <sly data-sly-test="${item.children[0].children[0].type == 'html' && item.children[0].children[0].types[0] == 'is-video'}">
+              <div class="video parbase cq-Screens-video cq-Sequence-item">
+                <div class="cq-Screens-video-rendering-contain">
+                  <video id="video-${groupList.index}-${itemList.index}" src="${item.children[0].children[0].url}"></video>
+                </div>
+              </div>
+              <div class="parbase cq-Screens-transition cq-Sequence-transition">
+                <div class="transition" data-transition="fade" data-transition-duration="600"></div>
+              </div>
             </sly>
           </sly>
           <!--/*

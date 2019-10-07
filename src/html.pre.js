@@ -16,12 +16,25 @@
  *
  */
 
+const map = require('unist-util-map')
+
 /**
  * The 'pre' function that is executed before the HTML is rendered
  * @param context The current context of processing pipeline
  * @param context.content The content
  */
-function pre(context) {
+function pre(context, action) {
+    map(context.content.mdast, (node) => {
+        if (node.type === 'html' && node.value.indexOf('<video') === 0) {
+            if (!node.types) {
+                node.types = []
+            }
+            node.types.push('is-video')
+            const matches = "<video src=\"/assets/video.mp4\" alt=\"\">".match(/src="(.*?)"/)
+            node.url = matches && matches[1]
+        }
+        return node
+    })
 }
 
 module.exports.pre = pre

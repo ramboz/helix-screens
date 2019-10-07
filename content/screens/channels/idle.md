@@ -5,3 +5,4 @@
 - ![](/assets/Hiking-Campaign-Male.jpg)
 - ![](/assets/skiing_2.jpg)
 - `markdown:idle-night.md`
+- <video src="/assets/bbb_short.mp4"></video>
