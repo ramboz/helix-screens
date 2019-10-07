@@ -30,7 +30,7 @@ function pre(context, action) {
                 node.types = []
             }
             node.types.push('is-video')
-            const matches = "<video src=\"/assets/video.mp4\" alt=\"\">".match(/src="(.*?)"/)
+            const matches = node.value.match(/src="(.*?)"/)
             node.url = matches && matches[1]
         }
         return node
