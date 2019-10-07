@@ -101,3 +101,19 @@ Structure should follow:
 - [](/assets/image2.jpeg)
 - [](/assets/image3.jpeg)
 ```
+
+
+Features
+--------
+
+Implemented:
+- local image playback
+- remote image playback
+- local video playback
+- embedded channel
+
+On the roadmap:
+- add support for video sources for local playback
+- remote video playback via youtube/hulu/vimeo embeds
+- changing default playback duration for items
+- asset-level scheduling
