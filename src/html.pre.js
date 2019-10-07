@@ -25,7 +25,7 @@ const map = require('unist-util-map')
  */
 function pre(context, action) {
     map(context.content.mdast, (node) => {
-        if (node.type === 'html' && node.value.indexOf('<video') === 0) {
+        if (node.type === 'html' && node.value.indexOf('<video ') === 0) {
             if (!node.types) {
                 node.types = []
             }
@@ -33,6 +33,16 @@ function pre(context, action) {
             const matches = node.value.match(/src="(.*?)"/)
             node.url = matches && matches[1]
         }
+        else if (node.type === 'html' && node.value.indexOf('<img ') === 0) {
+            if (!node.types) {
+                node.types = []
+            }
+            node.types.push('is-image')
+            node.type = 'image'
+            const matches = node.value.match(/src="(.*?)"/)
+            node.url = matches && matches[1]
+        }
+        
         return node
     })
 }
