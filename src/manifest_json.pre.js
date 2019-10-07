@@ -8,6 +8,17 @@ module.exports.before = {
     fetch: redirectSvcRequest
 }
 
+const addStaticPaths = async (entries, paths, action) => {
+    for (let i in paths) {
+        const headers = await fetchPageHeaders(`/htdocs${paths[i]}`, action)
+        const hash = JSON.parse(headers.etag);
+        entries.push({
+            path: paths[i],
+            hash: hash
+        })
+    }
+}
+
 const addPage = async (entries, { request, logger }) => {
     const channelPath = request.params.path;
     const headers = await fetchPageHeaders(channelPath, { request, logger })
@@ -20,42 +31,19 @@ const addPage = async (entries, { request, logger }) => {
 }
 
 const addCSSandJS = async (entries, action) => {
-    let headers = await fetchPageHeaders('/htdocs/design.css', action)
-    const designHash = JSON.parse(headers.etag);
-    
-    headers = await fetchPageHeaders('/htdocs/sequencechannel-embed.css', action)
-    const cssHash = JSON.parse(headers.etag);
-    
-    headers = await fetchPageHeaders('/htdocs/sequencechannel-embed.js', action)
-    const jsHash = JSON.parse(headers.etag);
-
-    entries.push({
-        path: '/design.css',
-        hash: designHash
-    })
-    entries.push({
-        path: '/sequencechannel-embed.css',
-        hash: cssHash
-    })
-    entries.push({
-        path: '/sequencechannel-embed.js',
-        hash: jsHash
-    })
+    await addStaticPaths(entries, [
+        '/design.css',
+        '/sequencechannel-embed.css',
+        '/sequencechannel-embed.js'
+    ], action)
 }
 
-const addAssets = async (entries, context, { request, logger }) => {
+const addAssets = async (entries, context, action) => {
     const assets = []
     visit(context.content.mdast, 'image', (node) => {
         assets.push(node.url)
     })
-
-    for (let i = 0; i < assets.length; i++) {
-        const headers = await fetchPageHeaders(`/htdocs${assets[i]}`, { request, logger })
-        entries.push({
-            path: assets[i],
-            hash: JSON.parse(headers.etag)
-        })
-    }
+    await addStaticPaths(entries, assets, action)
 }
 
 module.exports.after = {
