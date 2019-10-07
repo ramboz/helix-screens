@@ -111,6 +111,7 @@ Implemented:
 - remote image playback
 - local video playback
 - embedded channel
+- offline caching for images and videos
 
 On the roadmap:
 - add support for video sources for local playback

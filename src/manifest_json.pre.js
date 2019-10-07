@@ -11,7 +11,13 @@ module.exports.before = {
 const addStaticPaths = async (entries, paths, action) => {
     for (let i in paths) {
         const headers = await fetchPageHeaders(`/htdocs${paths[i]}`, action)
-        const hash = JSON.parse(headers.etag);
+        let hash
+        try {
+            hash = JSON.parse(headers.etag || null);
+        } catch (e) {
+            hash = headers.etag;
+        }
+
         entries.push({
             path: paths[i],
             hash: hash
@@ -19,14 +25,19 @@ const addStaticPaths = async (entries, paths, action) => {
     }
 }
 
-const addPage = async (entries, { request, logger }) => {
+const addPage = async (entries, { secrets, request, logger }) => {
     const channelPath = request.params.path;
-    const headers = await fetchPageHeaders(channelPath, { request, logger })
-    const channelHash = JSON.parse(headers.etag);
+    const headers = await fetchPageHeaders(channelPath, { secrets, request, logger })
+    let hash
+    try {
+        hash = JSON.parse(headers.etag || null);
+    } catch (e) {
+        hash = headers.etag;
+    }
 
     entries.push({
         path: channelPath.replace(/\.md$/, '.html'),
-        hash: channelHash
+        hash: hash
     })
 }
 
@@ -42,6 +53,12 @@ const addAssets = async (entries, context, action) => {
     const assets = []
     visit(context.content.mdast, 'image', (node) => {
         assets.push(node.url)
+    })
+    visit(context.content.mdast, 'html', (node) => {
+        const src = node.value.match(/\ src="(.*?)"/)
+        if (src) {
+            assets.push(src[1])
+        }
     })
     await addStaticPaths(entries, assets, action)
 }
