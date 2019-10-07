@@ -24,4 +24,4 @@
 function pre(context) {
 }
 
-module.exports.pre = pre;
+module.exports.pre = pre

@@ -4,4 +4,4 @@
 - ![](/assets/running-trail-man.jpg)
 - ![](/assets/Hiking-Campaign-Male.jpg)
 - ![](/assets/skiing_2.jpg)
-`markdown:/content/screens/channels/idle-night.html`
+- `markdown:idle-night.md`
