@@ -16,13 +16,16 @@ import fetchInRepo from './fetch-in-repo'
  * Tries to load the `<path>.md` from the content repository.
  * @return {*} the meta props object or {@code {}}
  */
-export default async (mdPath, { request, logger }) => {
+export default async (mdPath, action) => {
   return await fetchInRepo(mdPath, {
     transform: (data, res) => {
-      return {
-        md: data,
-        etag: JSON.parse(res.headers.etag || null)
+      const props = { md: data }
+      try { 
+        props.etag = JSON.parse(res.headers.etag || null)
+      } catch (e) {
+        props.etag = res.headers.etag
       }
+      return props
     }
-  }, { request, logger })
+  }, action)
 }

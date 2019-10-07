@@ -16,11 +16,11 @@ import fetchInRepo from './fetch-in-repo';
  * Tries to load the `<path>` from the content repository.
  * @return {*} the meta props object or {@code {}}
  */
-export default async (path, { request, logger }) => {
+export default async (path, action) => {
   return await fetchInRepo(path, {
     method: 'HEAD',
     transform: (data, res) => {
       return res.headers;
     }
-  }, { request, logger })
+  }, action)
 }

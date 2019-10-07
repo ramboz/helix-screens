@@ -17,12 +17,16 @@ import { safeLoad } from 'js-yaml'
  * Tries to load the `<path>.yaml` from the content repository.
  * @return {*} the meta props object or {@code {}}
  */
-export default async (yamlPath, { request, logger }) => {
+export default async (yamlPath, action) => {
   return await fetchInRepo(yamlPath, {
     transform: (data, res) => {
       const props = safeLoad(data)
-      props.etag = JSON.parse(res.headers.etag || null)
+      try { 
+        props.etag = JSON.parse(res.headers.etag || null)
+      } catch (e) {
+        props.etag = res.headers.etag
+      }
       return props;
     }
-  }, { request, logger })
+  }, action)
 }

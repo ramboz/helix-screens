@@ -16,13 +16,14 @@ import rp from 'request-promise-native';
  * Tries to load the `path` from the content repository.
  * @return {*} the meta props object or {@code {}}
  */
-export default async (path, options, { request, logger }) => {
-  const url = `https://raw.githubusercontent.com/ramboz/helix-screens/master${path}`
+export default async (path, options, { secrets, request, logger }) => {
+  const { owner, repo, ref } = request.params
+  const url = `${secrets.REPO_RAW_ROOT}${owner}/${repo}/${ref}${path}`
   logger.info(`trying to load ${url}`)
   try {
     return await rp(Object.assign({ url }, options))
   } catch (e) {
-    logger.info('unable to load:', e)
+    logger.info(`unable to load: ${url}`, e)
     return Promise.resolve({})
   }
 }

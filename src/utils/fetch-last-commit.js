@@ -17,7 +17,8 @@ import rp from 'request-promise-native';
  * @return {*} the meta props object or {@code {}}
  */
 export default async (path, { secrets, request, logger }) => {
-  const url = `https://api.github.com/repos/ramboz/helix-screens/commits?path=${path}&page=1&per_page=1`
+  const { owner, repo, ref } = request.params
+  const url = `${secrets.REPO_API_ROOT}repos/${owner}/${repo}/commits?path=${path}&page=1&per_page=1`
   logger.info(`trying to load ${url}`)
   try {
     return await rp({
