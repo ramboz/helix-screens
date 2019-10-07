@@ -1,0 +1,8 @@
+<sly data-sly-list="${content.mdast.children[1].children}">
+    <div class="image parbase cq-Screens-image cq-Sequence-item">
+        <div style="background-image: url('${item.children[0].children[0].url}'); background-size: cover;"></div>
+    </div>
+    <div class="parbase cq-Screens-transition cq-Sequence-transition">
+        <div class="transition" data-transition="fade" data-transition-duration="600"></div>
+    </div>
+</sly>
