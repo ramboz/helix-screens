@@ -16,7 +16,7 @@
     <div class="par sequence parsys aem-LayoutCell--1-1">
       <div class="cq-Sequence" data-duration="3000" data-strategy="normal" data-sly-list="${content.mdast.children[1].children}">
         <div class="image parbase cq-Screens-image cq-Sequence-item">
-          <div style="background-image: url('${item.children[0].children[0].url}'); background-size: cover;">
+          <div style="background-image: url('${item.children[0].children[0].url}'); background-size: cover;"></div>
         </div>
         <div class="parbase cq-Screens-transition cq-Sequence-transition">
           <div class="transition" data-transition="fade" data-transition-duration="600"></div>
