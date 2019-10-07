@@ -1,51 +1,60 @@
-const fetchMD = require('./utils/fetch-md').default
-const fetchYAML = require('./utils/fetch-yaml').default
-const getDevice = require('./utils/get-device').default
+const visitContent = require('./utils/visit-content').default
+
+const prepareDeviceProps = (timestamp, devicePath, deviceProps) => {
+    const preparedProps = Object.assign({}, deviceProps, {
+        id: devicePath,
+        path: devicePath,
+        lastModified: timestamp
+    })
+    delete preparedProps.etag
+    return preparedProps
+}
+
+const prepareDisplayProps = (timestamp, displayPath, deviceProps, displayProps) => {
+    const preparedProps = Object.assign({}, displayProps, {
+        path: displayPath,
+        configPath: displayPath + '/' + deviceProps.path.split('/').slice(-1),
+        lastModified: timestamp
+    })
+    delete preparedProps.etag
+    return preparedProps
+}
+
+const prepareChannelProps = (timestamp, channePath, role, channelProps, channelReq) => {
+    return Object.assign({}, channelProps, {
+        path: channePath,
+        role: role,
+        title: channelReq.md ? channelReq.md.split(/\r?\n/).find((line) => line.match(/^#+ /)).replace(/#+ /, '') : '',
+        lastModified: timestamp,
+        offline: {
+            enabled: true,
+            manifestPath: `${channePath}.manifest.json`
+        }
+    })
+}
 
 module.exports.pre = () => {}
 
 module.exports.after = {
 
-    // Load embeds with layout defined in the matching yaml file if available
+    // Get the config for the device, display and all assigned channels
     meta: async (context, { secrets, request, logger }) => {
         
-        // Get the device properties
-        const devicePath = getDevice(context.request)
-        const deviceProps = await fetchYAML(`${devicePath}.yaml`, { request, logger })
-        deviceProps.id = devicePath
-        deviceProps.path = devicePath
-        
-        let displayProps = {}
-
-        if (deviceProps.display) {
-            
-            // Get the display properties
-            const displayPath = deviceProps.display
-            displayProps = await fetchYAML(`${displayPath}.yaml`, { request, logger })
-            displayProps.path = displayPath
-            displayProps.configPath = displayPath + '/' + devicePath.split('/').slice(-1)
-            
-            // Get the channels properties
-            let channels = []
-            const channelRoles = Object.keys(displayProps.channels);
-            for (let i = 0; i < channelRoles.length; i++) {
-                const channePath = displayProps.channels[channelRoles[i]].path.replace(/\.(html|md)$/, '')
-                const channelProps = displayProps.channels[channelRoles[i]];
-                channelProps.path = channePath
-                channelProps.role = channelRoles[i]
-                const res = await fetchMD(`${channePath}.md`, { request, logger })
-                channelProps.title = res.md ? res.md.split(/\r?\n/).find((line) => line.match(/^#+ /)).replace(/#+ /, '') : ''
-                channelProps.lastModified = res.etag
-                channelProps.offline = {
-                    enabled: true,
-                    manifestPath: `${channePath}.manifest.json`
-                }
-                channels.push(channelProps)
+        let deviceProps, displayProps, channelsProps = []
+        await visitContent(context, { secrets, request, logger },
+            async (timestamp, path, props) => {
+                deviceProps = prepareDeviceProps(timestamp, path, props)
+            },
+            async (timestamp, path, props) => {
+                displayProps = prepareDisplayProps(timestamp, path, deviceProps, props)
+            },
+            async (timestamp, path, role, props, content) => {
+                channelsProps.push(prepareChannelProps(timestamp, path, role, props, content))
             }
-            displayProps.channels = channels
-        }
+        )
 
-        deviceProps.configPath = deviceProps.display + '/device'
+        displayProps.channels = channelsProps
+
         delete deviceProps.display
 
         context.content.json = {
