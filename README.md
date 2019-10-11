@@ -116,5 +116,6 @@ Implemented:
 On the roadmap:
 - add support for video sources for local playback
 - changing default playback duration for items
+- SPA channel
 - remote video playback via youtube/hulu/vimeo embeds
 - asset-level scheduling
