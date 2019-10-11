@@ -111,10 +111,10 @@ Implemented:
 - remote image playback
 - local video playback
 - embedded channel
-- offline caching for images and videos
+- offline caching for images and videos, and embedded channels
 
 On the roadmap:
 - add support for video sources for local playback
-- remote video playback via youtube/hulu/vimeo embeds
 - changing default playback duration for items
+- remote video playback via youtube/hulu/vimeo embeds
 - asset-level scheduling

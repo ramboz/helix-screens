@@ -63,6 +63,40 @@ const addAssets = async (entries, context, action) => {
     await addStaticPaths(entries, assets, action)
 }
 
+const addAssetsInEmbeddedChannels = async (entries, context, action) => {
+    const rp = require('request-promise-native')
+    const protocol = context.request.headers['upgrade-insecure-requests'] ? 'http' : 'https'
+    const host = context.request.headers.host
+    const urlParentPath = context.request.url.split('/').slice(0, -1).join('/')
+    
+    // Find all embedded channels and generate their manifest url
+    const embedRegExp = new RegExp(`^(markdown|html|embed): ?(.*(md|html))$`)
+    let additionalManifests = []
+    visit(context.content.mdast, 'inlineCode', (node) => {
+        const matches = embedRegExp.exec(node.value)
+        const page = matches[2].replace(/\.(html|md)$/, '')
+        if (!matches || !matches[2]) {
+            return
+        }
+        additionalManifests.push(`${protocol}://${host}${urlParentPath}/${page}.manifest.json`)
+    })
+
+    // Fetch all the manifests
+    const manifests = await Promise.all(additionalManifests.map((path) => rp(path)))
+
+    // Add assets from the manifest to the main manifest
+    manifests.forEach((data) => {
+        const json = JSON.parse(data)
+        json.entries
+            .filter((entry) => entry.path.indexOf('/content/screens/channels/') !== 0)
+            .forEach((entry) => {
+                if (!entries.some((e) => e.path === entry.path)) {
+                    entries.push(entry)
+                }
+            })
+    })
+}
+
 module.exports.after = {
 
     // List all entries with their hash in the manifest
@@ -73,6 +107,7 @@ module.exports.after = {
         await addPage(entries, { secrets, request, logger })
         await addCSSandJS(entries, { secrets, request, logger })
         await addAssets(entries, context, { secrets, request, logger })
+        await addAssetsInEmbeddedChannels(entries, context, { secrets, request, logger })
 
         context.content.json = {
             contentDelivery: {
