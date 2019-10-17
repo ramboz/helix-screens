@@ -5,10 +5,16 @@ This project is a proof of concept on running an AEM Screens server on the Helix
 It's not meant to offer full feature parity, but should allow simple playback of sequence channels containing images and videos, and be fully compatible with the official AEM Screens players.
 
 
+Prerequisites
+------------
+
+Being familiar with the [Project Helix](https://www.project-helix.io) concepts and at least having the Helix Cli installed:  
+`npm install -g @adobe/helix-cli`
+
 Installation
 ------------
 
-1. Clone repo
+1. Clone repo or download the sources
 0. Run `npm install`
 0. Run `hlx up`
 
@@ -16,7 +22,7 @@ Download a Screens player from http://download.macromedia.com/screens/
 
 1. Start the player, and go to the configuration tab.
 0. Set the server URL to the helix server (and port)
-0. Set the device to the device name (i.e. `/content/screens/devices/device0.yaml` => `device0`)
+0. Set the device to the device name (i.e. `/content/screens/devices/foo` or just `foo`)
 
 
 Content Structure
