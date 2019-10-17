@@ -28,6 +28,14 @@ Download a Screens player from http://download.macromedia.com/screens/
 Content Structure
 -----------------
 
+### General Structure
+
+- `content/screens`: the Screens devices, displays and channels
+- `htdocs`: the static files (CSS/JS/Assets) in the project
+- `libs/granite`: some mock files to skip authentication
+- `src`: the Helix APIs for Screens
+
+
 ### Devices
 
 Simple YAML file located in `/content/screens/devices/`.
