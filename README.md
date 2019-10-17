@@ -120,14 +120,14 @@ Structure should follow:
 Features
 --------
 
-Implemented:
+:white_check_mark: Implemented:
 - local image playback
 - remote image playback
 - local video playback
 - embedded channel
 - offline caching for images and videos, and embedded channels
 
-On the roadmap:
+:notebook: On the roadmap:
 - add support for video sources for local playback
 - changing default playback duration for items
 - SPA channel
