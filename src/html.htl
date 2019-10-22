@@ -84,28 +84,29 @@
 
     <!--/* Basic youtube video playback support for the sequence. */-->
     <script>
+      window.onYouTubeIframeAPIReady = function() {
       $(document).on('sequence-element-delegate-transition', '.cq-Screens-page', function(ev, cb) {
-        var videoId = $(ev.target).children('iframe').attr('src').match(/\/embed\/([^/?]+)/)[1];
-        window.onYouTubeIframeAPIReady = function() {
-          var player = new YT.Player($(ev.target).children('iframe').attr('id'), {
-            events: {
-              'onReady': function(player) {
-                player.target.playVideo();
-              },
-              'onStateChange': function(player) {
-                if (player.data === 0) {
-                  player.target.pauseVideo();
-                  cb();
-                }
-              }
-            }
-          });
-          $(ev.target).data('video-player', player);
-        }
         if ($(ev.target).data('video-player')) {
           var player = $(ev.target).data('video-player');
           player.playVideo();
+          return
         }
+
+        var videoId = $(ev.target).children('iframe').attr('src').match(/\/embed\/([^/?]+)/)[1];
+        var player = new YT.Player($(ev.target).children('iframe').attr('id'), {
+          events: {
+            'onReady': function(player) {
+              player.target.playVideo();
+            },
+            'onStateChange': function(player) {
+              if (player.data === 0) {
+                player.target.pauseVideo();
+                cb();
+              }
+            }
+          }
+        });
+        $(ev.target).data('video-player', player);
       });
       $(document).on('sequence-element-hide', '.cq-Screens-page', function(ev, cb) {
         var player = $(ev.target).data('video-player');
