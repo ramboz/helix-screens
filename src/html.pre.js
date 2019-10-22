@@ -42,6 +42,14 @@ function pre(context, action) {
             const matches = node.value.match(/src="(.*?)"/)
             node.url = matches && matches[1]
         }
+        else if (node.type === 'embed') {
+            const hosts = action.secrets.EMBED_WHITELIST.split(',')
+            if (!node.types) {
+                node.types = []
+            }
+            node.types.push(hosts.some((host) => node.url.indexOf(`/${host}/`) !== -1) ? 'is-external-embed' : 'is-internal-embed')
+        }
+
         
         return node
     })

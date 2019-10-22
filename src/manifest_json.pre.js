@@ -74,10 +74,10 @@ const addAssetsInEmbeddedChannels = async (entries, context, action) => {
     let additionalManifests = []
     visit(context.content.mdast, 'inlineCode', (node) => {
         const matches = embedRegExp.exec(node.value)
-        const page = matches[2].replace(/\.(html|md)$/, '')
         if (!matches || !matches[2]) {
             return
         }
+        const page = matches[2].replace(/\.(html|md)$/, '')
         additionalManifests.push(`${protocol}://${host}${urlParentPath}/${page}.manifest.json`)
     })
 

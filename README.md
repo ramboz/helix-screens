@@ -124,12 +124,14 @@ Features
 - local image playback
 - remote image playback
 - local video playback
+- remote video playback on youtube (no offline support)
 - embedded channel
 - offline caching for images and videos, and embedded channels
 
 :notebook: On the roadmap:
 - add support for video sources for local playback
 - changing default playback duration for items
+- add support for video sources for local playback
 - SPA channel
-- remote video playback via youtube/hulu/vimeo embeds
+- remote video playback via hulu/vimeo embeds
 - asset-level scheduling

@@ -22,7 +22,7 @@
             <!--/*
               Markdown Image
             */-->
-            <sly data-sly-test="${item.children[0].children && item.children[0].children[0].type == 'image'}">
+            <sly data-sly-test.mdImage="${item.children[0].children && item.children[0].children[0].type == 'image'}">
               <div class="image parbase cq-Screens-image cq-Sequence-item">
                 <div style="background-image: url('${item.children[0].children[0].url}'); background-size: cover;"></div>
               </div>
@@ -33,7 +33,7 @@
             <!--/*
               HTML Image
             */-->
-            <sly data-sly-test="${item.children[0].type == 'image'}">
+            <sly data-sly-test.htmlImage="${item.children[0].type == 'image'}">
               <div class="image parbase cq-Screens-image cq-Sequence-item">
                 <div style="background-image: url('${item.children[0].url}'); background-size: cover;"></div>
               </div>
@@ -44,7 +44,7 @@
             <!--/*
               HTML Video
             */-->
-            <sly data-sly-test="${item.children[0].children && item.children[0].children[0].type == 'html' && item.children[0].children[0].types[0] == 'is-video'}">
+            <sly data-sly-test.htmlVideo="${item.children[0].children && item.children[0].children[0].type == 'html' && item.children[0].children[0].types[0] == 'is-video'}">
               <div class="video parbase cq-Screens-video cq-Sequence-item" data-duration="-1">
                 <div class="cq-Screens-video-rendering-contain">
                   <video id="video-${groupList.index}-${itemList.index}" src="${item.children[0].children[0].url}"></video>
@@ -57,19 +57,63 @@
             <!--/*
               Embedded channel
             */-->
-            <sly data-sly-test="${item.children[0].children && item.children[0].children[0].type == 'embed'}">
+            <sly data-sly-test.internalEmbed="${item.children[0].children && item.children[0].children[0].type == 'embed' && item.children[0].children[0].types[0] == 'is-internal-embed'}">
               ${content.document.body.children[groupList.index].children[itemList.index].children[0]}
+            </sly>
+            <!--/*
+              External content 
+            */-->
+            <sly data-sly-test.externalEmbed="${item.children[0].children && item.children[0].children[0].type == 'embed' && item.children[0].children[0].types[0] == 'is-external-embed'}">
+              <div class="page parbase cq-Screens-page cq-Sequence-item" data-duration="-1">
+                <iframe id="video-${groupList.index}-${itemList.index}" src="${item.children[0].children[0].url}?enablejsapi=1" allow="autoplay; fullscreen"frameborder="0"></iframe>
+              </div>
+              <div class="parbase cq-Screens-transition cq-Sequence-transition">
+                <div class="transition" data-transition="fade" data-transition-duration="600"></div>
+              </div>
             </sly>
           </sly>
           <!--/*
             Embedded channel
           */-->
-          <sly data-sly-test="${group.type == 'paragraph' && group.children.length == 1 && group.children[0].type == 'embed'}">
+          <sly data-sly-test.embed2="${group.type == 'paragraph' && group.children.length == 1 && group.children[0].type == 'embed' && item.children[0].children[0].types[0] == 'is-internal-embed'}">
             ${content.document.body.children[groupList.index].children[0]}
           </sly>
       </div>
     </div>
     <script type="text/javascript" src="/sequencechannel-embed.js"></script>
+
+    <!--/* Basic youtube video playback support for the sequence. */-->
+    <script>
+      $(document).on('sequence-element-delegate-transition', '.cq-Screens-page', function(ev, cb) {
+        var videoId = $(ev.target).children('iframe').attr('src').match(/\/embed\/([^/?]+)/)[1];
+        window.onYouTubeIframeAPIReady = function() {
+          var player = new YT.Player($(ev.target).children('iframe').attr('id'), {
+            events: {
+              'onReady': function(player) {
+                player.target.playVideo();
+              },
+              'onStateChange': function(player) {
+                if (player.data === 0) {
+                  player.target.pauseVideo();
+                  cb();
+                }
+              }
+            }
+          });
+          $(ev.target).data('video-player', player);
+        }
+        if ($(ev.target).data('video-player')) {
+          var player = $(ev.target).data('video-player');
+          player.playVideo();
+        }
+      });
+      $(document).on('sequence-element-hide', '.cq-Screens-page', function(ev, cb) {
+        var player = $(ev.target).data('video-player');
+          player.stopVideo();
+          player.seekTo(0);
+      })
+    </script>
+    <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
     
   </body>
 </html>
